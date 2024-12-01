@@ -7,6 +7,7 @@ const songs = [
     "bensound-thelounge.mp3",
 ];
 const player = document.getElementById("player");
+let playingIndex = 0
 
 const createSongList = () => {
     const list = document.createElement("ol");
@@ -21,8 +22,12 @@ const createSongList = () => {
 const songList = document.getElementById("songList");
 songList.appendChild(createSongList());
 const links = document.querySelectorAll("li");
-for (const link of links) {
-    link.addEventListener("click", setSong);
+for (let i = 0; i < links.length; i++) {
+    const link = links[i]
+    link.addEventListener("click", e => {
+        playingIndex = i + 1
+        setSong(e.target.innerText)
+    });
 }
 
 function highlightPlayingSong(song) {
@@ -36,15 +41,31 @@ function highlightPlayingSong(song) {
     }
 }
 
-function setSong(e) {
+function nextSong() {
+    playingIndex++
+    if (playingIndex > 6) {
+        playingIndex = 1
+    }
+    setSong(songs[playingIndex - 1])
+}
+
+function previousSong() {
+    playingIndex--
+    if (playingIndex <= 0) {
+        playingIndex = 6
+    }
+    setSong(songs[playingIndex - 1])
+}
+
+function setSong(song) {
     document.querySelector("#headphones").classList.remove("pulse");
 
     const source = document.getElementById("source");
-    source.src = "songs/" + e.target.innerText;
+    source.src = "songs/" + song;
     document.getElementById(
         "currentSong"
-    ).innerText = `Now Playing:  ${e.target.innerText}`;
-    highlightPlayingSong(e.target.innerText)
+    ).innerText = `Now Playing:  ${song}`;
+    highlightPlayingSong(song)
     player.load();
     player.play();
 
